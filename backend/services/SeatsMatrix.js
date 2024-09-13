@@ -1,3 +1,5 @@
+import Bus from "../models/Bus.model.js";
+
 let matrix = [];
 let value = 1;
 const rowLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -16,4 +18,30 @@ export const seat = (row, column) => {
   }
 
   return matrix;
+};
+
+// Change seat status
+export const changeSeatStatus = async (busId, seatId) => {
+  const busExists = await Bus.findOne({ _id: busId }).populate("seats");
+
+  let seatFound = false;
+  let seatNumber;
+  if (Array.isArray(busExists.seats)) {
+    busExists.seats.forEach((totalSeat) => {
+      totalSeat.forEach((seat) => {
+        if (seat._id.toString() === seatId.toString()) {
+          seat.seatStatus = !seat.seatStatus;
+          seatNumber = seat.seatNumber;
+          seatFound = true;
+        }
+      });
+    });
+  }
+
+  if (seatFound) {
+    await busExists.save();
+    return seatNumber;
+  } else {
+    throw new Error("Seat not found");
+  }
 };
