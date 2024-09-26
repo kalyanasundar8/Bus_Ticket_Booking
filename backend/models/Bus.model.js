@@ -36,6 +36,11 @@ const busSchema = new mongoose.Schema(
       required: true,
     },
     seats: [[seatSchema]],
+    date: {
+      type: Date,
+      required: true,
+      default: Date.now,
+    }
   },
   { timestamps: true }
 );
